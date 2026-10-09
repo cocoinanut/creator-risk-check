@@ -48,7 +48,7 @@ cp .env.example .env
 
 If `.env` already exists, edit it instead of overwriting it. Set `BRAVE_SEARCH_API_KEY` and restart. Keep keys server-side; never commit `.env` or `.dev.vars`. Search terms are sent to the selected providers. Availability, coverage and provider limits vary.
 
-A provider outage returns an explicit coverage gap, never invented evidence. Successful live-source end-to-end acceptance with a configured Brave key remains outstanding. This prototype should not be presented as an autonomous commercial risk service.
+A provider outage returns an explicit coverage gap, never invented evidence. The project owner confirmed successful real-source retrieval acceptance on 2026-10-09. Credentials are configured privately in the runtime environment and intentionally excluded from GitHub. This confirmation was not independently rerun by the documentation reviewer. This prototype should not be presented as an autonomous commercial risk service.
 
 ## Privacy and data
 
