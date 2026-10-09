@@ -19,7 +19,7 @@ Three sample cases, transparent six-dimension weights, a severe-risk example rul
 
 ## What remains to validate
 
-Real-provider successful queries with configured credentials; Live desktop/mobile interaction testing; independent usability sessions; reviewer agreement; and any claimed operational benefit. The example scoring thresholds have not been calibrated against real outcomes.
+The project owner confirmed successful real-source retrieval acceptance on 2026-10-09; credentials remain private and are excluded from GitHub. This documentation update does not claim an independent rerun or acceptance of every provider. Remaining validation includes broader Live interaction testing with real results, independent usability sessions, reviewer agreement and any claimed operational benefit. The example scoring thresholds have not been calibrated against real outcomes.
 
 ## Contribution and provenance
 
