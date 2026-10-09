@@ -14,7 +14,7 @@ Current repository file list, local matching source and two existing commit reco
 
 ## Remaining product work
 
-- Successful live-provider end-to-end acceptance with configured credentials remains outstanding. Current environment has no Brave key; it cannot prove Brave live results.
+- Status update, 2026-10-09: the project owner confirms successful real-source retrieval acceptance. Runtime credentials are private and intentionally absent from GitHub. This confirmation was not independently rerun in this documentation review; no provider-specific result or measurement is inferred.
 - Broader Live browser acceptance with real-provider results remains outstanding.
 - User testing, scoring calibration and measured business impact have not been completed.
 - An unrestricted hosted Live service needs durable rate limits, access control and spending limits. Repository publication does not deploy such a service.
