@@ -562,8 +562,10 @@ export default function LivePage() {
         )}
         <details className="live-panel live-setup" id="live-setup">
           <summary>
-            <Settings2 size={17} />{" "}
-            {t("数据源设置与能力边界", "Source setup & capabilities")}
+            <span className="live-setup-label">
+              <Settings2 size={17} aria-hidden="true" />
+              {t("数据源设置与能力边界", "Source setup & capabilities")}
+            </span>
           </summary>
           <div>
             <h3>{t("基础公开源", "Basic public sources")}</h3>

@@ -1,163 +1,79 @@
 # Creator Risk Check
 
-可运行的中文 Creator 合作风险审核工作台，采用 React 19、TypeScript、Next.js App Router API 与 Vinext/Vite，包含 Radix 无障碍交互组件。包含独立的真实公开资料检索工作区 `/live` 和三个完全虚构的演示案例。
+A bilingual portfolio prototype for reviewing creator partnerships with visible evidence, uncertainty and human judgment.
 
-## 快速启动
+[中文说明](README.zh-CN.md) · [Product decisions](docs/CASE_STUDY.md) · [Verification and limitations](qa/PUBLIC_RELEASE.md)
 
-本机依赖已经安装；在项目目录双击 `start-demo.command`，或者执行：
+![Desktop demo](qa/desktop.png)
 
-```sh
-./start-demo.command
-```
+## Try the demo locally
 
-这个脚本优先使用 PATH 中的 Node，找不到时使用此电脑 Codex 自带的 Node；不需要全局安装 npm 即可启动当前已安装的项目。端口以终端输出为准，默认 http://127.0.0.1:5173/ 。如果当前演示已经运行，直接打开此地址即可，无需重复启动。
-
-在另一台电脑，从源码安装（Node.js >= 22.13，推荐 Node 22 LTS，附带 npm）：
+Requires Node.js **22.13 or newer** and npm. No API key is needed for the fictional demo.
 
 ```sh
+git clone https://github.com/cocoinanut/creator-risk-check.git
+cd creator-risk-check
 npm ci
 npm run dev
 ```
 
-构建与本地生产预览：
+Open the local address printed in the terminal (normally http://localhost:5173). Choose **English** in the language selector. Select a sample creator, inspect the evidence, and record a reasoned human decision.
 
-```sh
-npm run build
-npm run start
-```
+Try `Woodland Notes`, `Weekend Lab` or `Aran Outdoors`. Their identities, sources and scores are entirely fictional. A real name never receives a fictional report.
 
-`start` 使用项目内 Wrangler 本地运行构建产物，访问终端给出的 Local 地址。无需搜索 API、密钥或数据库。`npm run dev` 即可体验全部演示功能。
+## Two separate workspaces
 
-## 三个案例
-
-| 名称 | 主页 ID | 结果 | 合作建议 |
-| --- | --- | --- | --- |
-| 林间手记 | @lin.notes.demo | 18 / 低风险 | 可进入候选 |
-| 周末开箱局 | @weekend.lab.demo | 45 / 中风险 | 需人工复核 |
-| 极限阿燃 | @aran.outdoor.demo | 85 / 高风险 | 建议暂缓 |
-
-搜索可输入名字、@ID 或案例对应平台主页链接。链接仅用于解析平台和账号，不访问该真实域名，也不表示这些账号真实存在。平台归属只根据模拟案例中的互链声明确认；未确认的同名候选不会评分。点击首页案例卡相当于直接选择该已定义的演示身份。
-
-可试用：`林间手记`、`@weekend.lab.demo`、`https://www.youtube.com/@aran.outdoor.demo`。输入真实人物、其他 ID、伪装域名、视频链接或无法确认的平台账号时不会生成虚构报告。
-
-## 页面语言
-
-顶部语言选择器支持中文 / English，报告和独立证据页面都可切换。选择自动保存在当前浏览器，并同步到同源标签页；新打开的证据链接携带语言参数。切换不改变评分、当前案例、展开的事件、审核选择或用户填写的备注。
-
-英文搜索名称：`Woodland Notes`、`Weekend Lab`、`Aran Outdoors`；原中文名和 @ID 继续可用。三例分析、证据、历史记录、搜索提示与无障碍标签均有英文文案。用户填写的备注保持原文。
-
-翻译文件：`lib/i18n/en.json`；语言状态与展示边界：`lib/i18n/language.tsx`；动态文案：`lib/i18n/translate.ts`。评估数据与持久化值仍使用固定 ID / 原始值，避免切换语言导致审核记录错位。
-
-## 演示交互
-
-- 首页搜索、同名候选确认、@ID 平台确认、报告内案例切换。
-- 综合风险卡、合作价值与未来风险分析、条件品类建议、资料缺口。
-- 六项加权评分、维度依据、重点风险触发说明及暂定分数标识。
-- 来源覆盖展开，清楚标注模拟已检查/受限平台、检索时间、评论样本和缺口。
-- 重要事件展开；低风险旧记录默认折叠，高风险重大历史保留在重要列表。
-- 证据抽屉含类型、来源、发布日期、查询日期、摘录、支持点和局限。
-- 来源链接在新标签页打开 `/evidence?id=...` 站内演示记录，不伪装外部真实证据；无效 ID 显示未找到。
-- 三项人工核查、备注、合作判断改判、改判理由。每个案例独立自动保存于当前浏览器 localStorage。
-- 报告会保留 AI 原始评分与建议，人工改判不修改证据或六维分数；改判未写理由时显示草稿提示。
-- 键盘可操作的 Select、Checkbox、事件 disclosure 与支持 Escape 关闭的证据抽屉。
-- 浏览器支持 WebMCP 时注册 `open_demo_creator`，仅切换虚构案例，不触发真实检索或人工决策。
-
-## 评分说明
-
-六项权重为 25%、25%、15%、15%、10%、10%。基础分计算后四舍五入。三例未取整基础分分别是 17.6、44.55、75.1。
-
-严重风险规则：原始内容与独立记录交叉支持的严重安全行为，且重复发生、缺乏独立整改证据时，设置总分下限 85。高风险例为 75.1 + 9.9 = 85；单方指称不触发此规则。同一事件的跟评不重复加分；社区维度只讨论跨帖持续主题。
-
-这些分数是为可审阅原型设定的分析员判断，不是实测算法输出、风险发生概率或经统计校准的预测。演示分数不会用于 Live 的真实人物。Live 只查询公开索引，尚未提供自动风险评分或情绪模型。
-
-中风险案例的账号可信度资料有限，显示暂定分数及低维度证据充分度。整体充分度仍为中。关键身份缺失时停止评分。缺失不视为零风险。
-
-## 数据边界
-
-首页三个案例及其来源、日期与“已检查”状态均为虚构演示，不用于评价真实人物。`/live` 使用独立后端查询真实来源，失败时展示错误和覆盖缺口，绝不回退为演示资料。检索结果只是线索，不等于经过核实的事件。
-
-受众画像分别标注公开内容推测、评论样本观察与未授权真实粉丝数据；没有精确年龄、地域、性别或“虚假粉丝”结论。品牌适配不参与通用风险评分。
-
-审核记录仅存在当前浏览器、当前站点地址。不会跨设备同步；清除站点存储会清除记录。未包含账号体系、后端共享审核或文件上传；真实索引查询在独立 Live 工作区进行。
-
-## 文件说明
-
-- `app/page.tsx`：首页、搜索确认、审核报告、证据抽屉、人工改判。
-- `lib/demo-data.ts`：三例完整内容、证据、六维分数、搜索解析与总分函数。
-- `app/evidence/page.tsx`：站内虚构来源记录。
-- `app/globals.css`：桌面与移动端布局。
-- `tests/model.test.mjs`：计分、搜索安全边界、引用完整性与历史策略检查。
-- `qa/QA.md`：实际运行检查记录；同目录包含桌面/手机截图。
-
-验证命令：
-
-```sh
-node --test tests/model.test.mjs
-node node_modules/typescript/bin/tsc --noEmit
-npm run build
-```
-
-## 交付状态
-
-本地可运行、类型检查与生产构建通过。已创建的 `.openai/hosting.json` 是预留的 Sites 项目标识，不代表已部署。执行期间 Sites 本地发布脚本不再可用，因此本次交付以完整源码和已运行的本地预览为准，未生成线上发布地址。
-
-
-## 真实公开资料检索（新增）
-
-启动后打开 `http://127.0.0.1:5173/live`。支持中文 / English。
-
-流程：输入名字 / @ID / 主页 → 选择平台或候选对象 → 确认检索对象 → 查询公开来源 → 打开原始链接与证据抽屉 → 标记相关性、指称、评论或排除 → 填写人工判断 → 导出 JSON。审核记录按检索对象分别保存在当前浏览器；没有多人同步或云端存储。
-
-### 数据源
-
-| 来源 | 配置 | 实际范围 |
+| Workspace | What works | Boundary |
 | --- | --- | --- |
-| Wikipedia REST API | 无需密钥 | 中/英文百科候选和摘要；并非账号认证，也不覆盖大多数小型 creator |
-| GDELT DOC API | 无需密钥 | 最近三个月新闻索引，最多 20 条；可能限流、不包含全文 |
-| Brave Search API | `BRAVE_SEARCH_API_KEY` | 网页索引；姓名候选最多 1 次调用，研究最多 3 次调用：近三年、回应、不限制日期的历史补查 |
+| Demo `/` | Three fictional cases, six risk dimensions, evidence drawers, historical context, local review notes, Chinese / English | Scores are designed examples, not trained predictions or probabilities |
+| Public-source research `/live` | Identity selection, public search adapters, coverage and error reporting, manual evidence review, JSON export | No automated scoring, account verification, social-platform comments or audience demographics |
 
-Brave 配置（服务可能收费，先自行选择适合的服务方案）：
+No hosted demo URL is claimed in this release. Publishing this repository makes the source and screenshots accessible; it does not deploy a public service.
+
+## Why this design
+
+Missing evidence is not treated as low risk. Same-name accounts are not merged automatically. Source excerpts remain leads for review, and the reviewer must explain a changed decision. See [the case study](docs/CASE_STUDY.md) for the design logic and its limits.
+
+![English interface](qa/language-switch.png)
+
+![Live research workspace](qa/live-desktop.png)
+
+## Optional public-source research
+
+Wikipedia and GDELT adapters require no key. Brave Search is optional:
 
 ```sh
 cp .env.example .env
-# 用编辑器在 .env 中填写 BRAVE_SEARCH_API_KEY，再重启开发服务
-npm run dev
 ```
 
-如果已有 `.env`，直接编辑，**不要覆盖现有配置**。密钥由 Cloudflare Worker 的 `env` 在服务器读取；不可使用 `NEXT_PUBLIC_` / `VITE_` 前缀，不会返回给前端。线上需单独设置同名运行时 secret。`.env`、`.dev.vars` 被 Git 忽略，示例文件没有真实密钥。未配置密钥不调用 Brave。没有集成社交平台账号授权或视频 / 评论获取接口。
+If `.env` already exists, edit it instead of overwriting it. Set `BRAVE_SEARCH_API_KEY` and restart. Keep keys server-side; never commit `.env` or `.dev.vars`. Search terms are sent to the selected providers. Availability, coverage and provider limits vary.
 
-官方文档：
-- https://www.mediawiki.org/wiki/API:REST_API/Reference
-- https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/
-- https://api-dashboard.search.brave.com/documentation/quickstart
-- https://api-dashboard.search.brave.com/app/documentation/web-search/query
+A provider outage returns an explicit coverage gap, never invented evidence. Successful live-source end-to-end acceptance with a configured Brave key remains outstanding. This prototype should not be presented as an autonomous commercial risk service.
 
-### 判断边界
+## Privacy and data
 
-- 选择对象只是用户指定检索目标，不代表已核实账号归属。主页链接仅解析平台与 handle，不从用户输入 URL 抓取内容；同名或相似头像不会导致跨平台合并。
-- 搜索标题 / 摘要不等于已确认事实；不会自动生成争议事件、受众人口统计或品牌适配。人可以查看原始资料并填写有理由的合作判断。
-- 六个维度目前均无法自动评分，分数为 `null`、证据充分度为低。不会因没有负面结果给出低风险，也不会给真人套演示分数。
-- GDELT `seendate` 和 Brave `page_age` 是索引相关时间，不冒充原始发布日期。无法获取发布日期时明确显示未提供。
-- 按规范化 URL 去重（剔除常见跟踪参数）；尚未做跨网站事件聚类，同一事件可能仍有多条线索，需人工排除转载。
-- 所有来源逐项显示成功 / 未获取 / 未配置、查询时间、范围、数量和错误。完整平台历史、音视频、删除内容、评论和授权粉丝数据仍为空缺；不能声称查遍全网。
-- 页面与接口不缓存检索内容；本机审核备注由用户决定保存和导出。查询词会发送至页面显示的数据提供方。
+The repository uses fictional demo material and public-source adapters. It is not a distribution of employer/client research, private transcripts or internal templates. Review notes remain in the current browser's localStorage; clearing site storage removes them. JSON exports may contain your notes and retrieved material: review them before sharing. There is no multi-user storage or account system.
 
-### 后端与测试
+Public hosting of Live requires access controls, durable rate limiting and provider spending limits. The local in-memory limiter is not a distributed quota system.
 
-`GET /api/live` 仅返回配置布尔值；`POST /api/live` 接收 `{action: "discover" | "report", query, platform?, confirmed?}`。报告请求要求 `confirmed: true`。每个提供方超时为 16 秒，返回部分成功结果；正文限 4 KB，同源 Origin 校验，按用户 / 可信代理 IP 的进程内限流 8 次 / 分钟，GDELT 调用间隔至少 6 秒。
-
-只向固定 API 域名发起请求，不抓取用户提供的任意 URL，避免 SSRF。前端将摘录作为纯文本渲染；出站链接过滤非 HTTPS、私网字面地址及带凭据 URL。错误不包含原始服务响应或密钥。
+## Verify and build
 
 ```sh
 npm test
 npx tsc --noEmit
 npm run build
+npm run start
 ```
 
-`tests/live.test.mjs` 的模拟提供方仅用于单元测试，绝不接入产品页面。包含恶意 URL、平台消歧、缺失资料、来源日期、去重、部分失败与错误脱敏等测试。
+`start` serves the Cloudflare build locally. This project uses React, TypeScript, Vinext/Vite and Cloudflare Workers; it is not a drop-in standard Next.js deployment.
 
-### 当前验证与上线限制
+## Repository guide
 
-2026-09-30：本地实际调用已验证接口会如实报告连接失败 / 限流，未返回虚构数据。当前环境未配置 Brave 密钥，Wikipedia 连接超时、GDELT 返回限流；尚未完成从真实提供方成功取回资料的端到端验收。浏览器工具拒绝访问本地预览，本轮无法完成桌面 / 手机视觉检查，旧 `qa` 截图仅代表此前演示版本。
+- `app/page.tsx`: fictional review workspace.
+- `app/live/`: public-source research and human review.
+- `lib/demo-data.ts`: fictional evidence and transparent scoring rules.
+- `lib/live/search.ts`: fixed-provider retrieval and safe input parsing.
+- `tests/`: scoring, identity, provenance and API boundary checks.
+- `qa/`: screenshots and dated verification. Earlier screenshots depict the demo, not Live acceptance.
 
-对外开放前仍需：配置可用的数据服务并完成真实查询验收；设置服务预算、持久化全局限流及访问控制。进程内限流会随重启清空，不能当作多实例公共服务的配额保护。当前交付为可配置的真实资料研究 MVP，不是已经校准并可独立作出商业决策的自动风控服务。
+This is an AI-assisted portfolio prototype. Product behavior, test results and unfinished capabilities are documented separately from claims of real-world impact. Third-party components retain their own licenses; no additional reuse license is granted for original project code in this release.

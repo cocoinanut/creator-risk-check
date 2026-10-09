@@ -505,6 +505,12 @@
 .live-setup summary {
   cursor: pointer;
 }
+.live-setup-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: middle;
+}
 .live-setup h3 {
   margin: 22px 0 7px;
   font-size: 14px;

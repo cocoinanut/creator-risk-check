@@ -30,7 +30,8 @@ export async function POST(request: Request) {
   const now = Date.now();
   for (const [id, b] of budgets) if (b.reset < now) budgets.delete(id);
   const id =
-    request.headers.get("oai-authenticated-user-id") ||
+    // Cloudflare supplies this header at its edge. Local requests share a bucket;
+    // never trust a caller-supplied user ID as a quota identity.
     request.headers.get("cf-connecting-ip") ||
     "local";
   const budget = budgets.get(id) || { count: 0, reset: now + 60000 };
@@ -44,8 +45,25 @@ export async function POST(request: Request) {
   try {
     if (Number(request.headers.get("content-length")) > 4096)
       throw new InputError("invalid_query");
-    const body = await request.text();
-    if (body.length > 4096) throw new InputError("invalid_query");
+    // Bound bytes while reading, including chunked bodies with no Content-Length.
+    const reader = request.body?.getReader();
+    if (!reader) throw new InputError("invalid_query");
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 4096) {
+        await reader.cancel();
+        throw new InputError("invalid_query");
+      }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
+    const body = new TextDecoder().decode(bytes);
     let data;
     try {
       data = JSON.parse(body);
